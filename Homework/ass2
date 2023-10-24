@@ -1,0 +1,31 @@
+package homework;
+
+
+public class salary {
+    public static void main(String[] args) {
+        
+        String employeeName = "John Doe"; 
+        double grossSalary = 60000.0;     
+
+                double stateTaxes = 0.284 * grossSalary;
+
+                double personalTax;
+        if (grossSalary - stateTaxes - 7000 > 0) {
+            personalTax = 0.10 * (grossSalary - stateTaxes - 7000);
+        } else {
+            personalTax = 0.0;
+        }
+
+                double netSalary = grossSalary - stateTaxes - personalTax;
+
+                stateTaxes = Math.round(stateTaxes);
+        personalTax = Math.round(personalTax);
+        netSalary = Math.round(netSalary);
+
+                System.out.println("The employee Name: " + employeeName);
+        System.out.println("Gross Salary: MKD " + grossSalary);
+        System.out.println("State Taxes: MKD " + stateTaxes);
+        System.out.println("Personal Tax: MKD " + personalTax);
+        System.out.println("Net Salary: MKD " + netSalary);
+    }
+}
