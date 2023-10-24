@@ -1,0 +1,45 @@
+package homework;
+
+public class string {
+
+
+    public static void main(String[] args) {
+       
+        String inputString = "Marko Micovski 5678"; 
+
+       
+        char firstChar = inputString.charAt(0);
+        int firstCharPosition = 0;
+
+       
+        char lastChar = inputString.charAt(inputString.length() - 1);
+        int lastCharPosition = inputString.length() - 1;
+
+        
+        char middleChar;
+        int middleCharPosition;
+        int middleIndex = inputString.length() / 2;
+        if (inputString.length() % 2 == 1) {
+            
+            middleChar = inputString.charAt(middleIndex);
+            middleCharPosition = middleIndex;
+        } else {
+         
+            middleChar = inputString.charAt(middleIndex - 1);
+            middleCharPosition = middleIndex - 1;
+        }
+
+        
+        int sumOfCharacters = firstChar + lastChar + middleChar;
+
+        
+        char biggestValueChar = (char) Math.max(Math.max(firstChar, lastChar), middleChar);
+
+        
+        System.out.println("Its First Character: " + firstChar + " (Position: " + firstCharPosition + ")");
+        System.out.println("Its Last Character: " + lastChar + " (Position: " + lastCharPosition + ")");
+        System.out.println("Its Middle Character: " + middleChar + " (Position: " + middleCharPosition + ")");
+        System.out.println("The Sum of These Characters: " + sumOfCharacters);
+        System.out.println("The Biggest Character from these three is: " + biggestValueChar);
+    }
+}
