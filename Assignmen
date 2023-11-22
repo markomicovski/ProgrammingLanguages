@@ -1,0 +1,29 @@
+class Test {
+    private String s;
+
+    public Test() {
+        this.s = "Programming languages";
+    }
+
+    public void method1() {
+        System.out.println(s);
+    }
+
+    public void method2(int n) {
+        System.out.println(n);
+    }
+
+    private void method3() {
+        System.out.println("Private method is invoked");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test testObj = new Test();
+
+        System.out.println("Class name: " + testObj.getClass().getSimpleName());
+
+        System.out.println("Constructor name: Test");
+    }
+}
