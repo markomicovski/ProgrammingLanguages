@@ -1,0 +1,24 @@
+import java.io.Serializable;
+
+public class Student implements Serializable {
+    private String name;
+    private String phoneNum;
+    private int indexNum;
+    private transient int recordNum;
+
+    public Student() {
+        this.name = "";
+        this.phoneNum = "";
+        this.indexNum = 0;
+        this.recordNum = 0;
+    }
+
+    public Student(String name, String phoneNum, int indexNum, int recordNum) {
+        this.name = name;
+        this.phoneNum = phoneNum;
+        this.indexNum = indexNum;
+        this.recordNum = recordNum;
+    }
+
+ 
+}
