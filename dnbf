@@ -1,0 +1,128 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class FileManager {
+
+    public static void main(String[] args) {
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("Usage: java FileManager <command> <path> [content]");
+            return;
+        }
+
+        String command = args[0];
+        String path = args[1];
+
+        switch (command) {
+            case "create-file":
+                createFile(path);
+                break;
+            case "delete-file":
+                deleteFile(path);
+                break;
+            case "create-dir":
+                createDirectory(path);
+                break;
+            case "delete-dir":
+                deleteDirectory(path);
+                break;
+            case "list":
+                listFiles(path);
+                break;
+            case "write-file":
+                if (args.length != 3) {
+                    System.out.println("Usage: write-file requires content argument");
+                    return;
+                }
+                writeFile(path, args[2]);
+                break;
+            case "read-file":
+                readFile(path);
+                break;
+            default:
+                System.out.println("Invalid command.");
+        }
+    }
+
+    private static void createFile(String path) {
+        File file = new File(path);
+        try {
+            if (file.createNewFile()) {
+                System.out.println("File created successfully: " + path);
+            } else {
+                System.out.println("File already exists: " + path);
+            }
+        } catch (IOException e) {
+            System.err.println("Error creating file: " + e.getMessage());
+        }
+    }
+
+    private static void deleteFile(String path) {
+        File file = new File(path);
+        if (file.delete()) {
+            System.out.println("File deleted successfully: " + path);
+        } else {
+            System.err.println("Error deleting file: " + path);
+        }
+    }
+
+    private static void createDirectory(String path) {
+        File dir = new File(path);
+        if (dir.mkdir()) {
+            System.out.println("Directory created successfully: " + path);
+        } else {
+            System.err.println("Error creating directory: " + path);
+        }
+    }
+
+    private static void deleteDirectory(String path) {
+        File dir = new File(path);
+        if (dir.isDirectory()) {
+            String[] contents = dir.list();
+            if (contents != null && contents.length == 0) {
+                if (dir.delete()) {
+                    System.out.println("Directory deleted successfully: " + path);
+                } else {
+                    System.err.println("Error deleting directory: " + path);
+                }
+            } else {
+                System.err.println("Directory not empty: " + path);
+            }
+        } else {
+            System.err.println("Path is not a directory: " + path);
+        }
+    }
+
+    private static void listFiles(String path) {
+        File dir = new File(path);
+        if (dir.isDirectory()) {
+            String[] contents = dir.list();
+            if (contents != null) {
+                System.out.println("Files and directories in " + path + ":");
+                for (String content : contents) {
+                    System.out.println(content);
+                }
+            } else {
+                System.out.println("Error listing directory: " + path);
+            }
+        } else {
+            System.err.println("Path is not a directory: " + path);
+        }
+    }
+
+    private static void writeFile(String path, String content) {
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.write(content);
+            writer.close();
+            System.out.println("Content written to file: " + path);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    private static void readFile(String path) {
+        try {
+            String content = Files.readString(Paths.
