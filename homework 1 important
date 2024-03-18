@@ -1,0 +1,144 @@
+Server Side: TrafficDataServer.java - This server listens for connections, handles requests for traffic information, and processes updates to the traffic data.
+
+
+
+  import java.io.*;
+import java.net.*;
+import java.util.concurrent.*;
+import java.util.HashMap;
+
+public class TrafficDataServer {
+    private static final int PORT = 12345;
+    private static final String DATA_FILE = "traffic_data.txt";
+    private static ConcurrentHashMap<String, String> trafficData = new ConcurrentHashMap<>();
+
+    public static void main(String[] args) {
+        loadTrafficData();
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Server is listening on port " + PORT);
+            while (true) {
+                new ClientHandler(serverSocket.accept()).start();
+            }
+        } catch (IOException e) {
+            System.out.println("Server exception: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void loadTrafficData() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(DATA_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    trafficData.put(parts[0].trim(), parts[1].trim());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Could not load traffic data: " + e.getMessage());
+        }
+    }
+
+    private static synchronized void updateTrafficData(String route, String status) {
+        trafficData.put(route, status);
+        saveTrafficData();
+    }
+
+    private static synchronized void saveTrafficData() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_FILE))) {
+            for (String route : trafficData.keySet()) {
+                writer.println(route + ":" + trafficData.get(route));
+            }
+        } catch (IOException e) {
+            System.out.println("Could not save traffic data: " + e.getMessage());
+        }
+    }
+
+    private static class ClientHandler extends Thread {
+        private Socket socket;
+
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+        }
+
+        public void run() {
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                 PrintWriter output = new PrintWriter(socket.getOutputStream(), true)) {
+
+                String clientMessage;
+                while ((clientMessage = input.readLine()) != null) {
+                    System.out.println("Received: " + clientMessage);
+                    if (clientMessage.startsWith("GET_ROUTE:")) {
+                        String route = clientMessage.substring(10);
+                        String status = trafficData.getOrDefault(route, "Route not found");
+                        output.println(route + ":" + status);
+                    } else if (clientMessage.startsWith("UPDATE_ROUTE:")) {
+                        String[] parts = clientMessage.split(":", 3);
+                        if (parts.length == 3) {
+                            updateTrafficData(parts[1], parts[2]);
+                            output.println("UPDATE_SUCCESS:" + parts[1]);
+                        } else {
+                            output.println("UPDATE_FAILED");
+                        }
+                    } else if ("QUIT".equals(clientMessage)) {
+                        break;
+                    }
+                }
+                socket.close();
+            } catch (IOException e) {
+                System.out.println("Server exception: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+Client Side: TrafficInfoClient.java ---This client connects to the server, sends requests, and processes responses.
+
+import java.io.*;
+import java.net.*;
+
+public class TrafficInfoClient {
+    private static final String SERVER_IP = "127.0.0.1";
+    private static final int SERVER_PORT = 12345;
+
+    public static void main(String[] args) {
+        try (Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
+            
+            String userInput;
+            while ((userInput = stdIn.readLine()) != null && !userInput.equalsIgnoreCase("QUIT")) {
+                out.println(userInput);
+                System.out.println("Server response: " + in.readLine());
+            }
+        } catch (UnknownHostException e) {
+            System.err.println("Don't know about host " + SERVER_IP);
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Couldn't get I/O for the connection to " +
+                SERVER_IP);
+            System.exit(1);
+        }
+    }
+}
+
+How to Run Compile Both Applications:
+Compile the server: javac TrafficDataServer.java
+Compile the client: javac TrafficInfoClient.java
+Start the Server:
+Run the server: java TrafficDataServer
+Run the Client:
+Run the client in a separate terminal: java TrafficInfoClient
+Use commands like GET_ROUTE:MainSt or UPDATE_ROUTE:MainSt:Light, Fast Moving to interact with the server.
+
+
+
+
