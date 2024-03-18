@@ -1,6 +1,0 @@
-Key Points of the Program:
-FileWriter: A class used for writing character files. In this example, it's wrapped with BufferedWriter for efficient writing of text.
-BufferedWriter: Provides buffering for Writer instances, making it more efficient to write characters, arrays, and strings. It's used here to write text to the file.
-try-with-resources Statement: This feature automatically manages resource handling and closing, ensuring that the BufferedWriter is closed properly after the writing is completed or if an exception occurs.
-Handling Exceptions: The program includes exception handling for IOException, which could occur if there's an issue creating or writing to the file. The catch block prints an error message to the console if an exception is thrown.
-Compile and run this program in your Java environment. It will create a new file named example.txt in the same directory as your program (unless you specify a different path for the file). The file will contain the text lines as instructed.
