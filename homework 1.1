@@ -1,0 +1,22 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class FileWriterExample {
+    public static void main(String[] args) {
+        String fileName = "example.txt"; // The name of the file to create
+
+        // Using try-with-resources to ensure the FileWriter and BufferedWriter are closed properly
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            // Writing text to the file
+            writer.write("Hello, world!\n"); // Adding a newline character for the next line
+            writer.write("Welcome to Java File I/O");
+
+            System.out.println("The file has been written successfully.");
+        } catch (IOException e) {
+            // Catching and handling potential IOExceptions
+            System.err.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
+}
+
